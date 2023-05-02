@@ -69,6 +69,6 @@ Var = input()
 if Var == "1":
     change_img()
 
-window.mainloop()
+#window.mainloop()
 
 
