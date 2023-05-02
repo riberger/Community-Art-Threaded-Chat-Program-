@@ -81,18 +81,6 @@ if __name__ == '__main__':
   HOST = 'localhost'
   PORT = 8585
   client = Client(HOST, PORT)
-#   client.write({'x': 0, 'y': 0, 'color': (255, 255, 0, 255)})
-  
-#   while True:
-#       m = input('> ')
-#       m_split = m.split()
-      
-#       if len(m_split) == 0:
-#           break
-      
-#       print(m_split)
-      
-#       client.write({'x': int(m_split[0]), 'y': int(m_split[1]), 'color': (255, 120, 0, 255)})
   input()
   client.stop()
 
