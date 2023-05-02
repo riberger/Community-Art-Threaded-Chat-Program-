@@ -21,60 +21,70 @@ class Server():
         img = Image.open('init.png', mode='r')
         self.pixels = np.array(img)
 
-        
-        # self.pixels = np.zeros([16, 16, 3], dtype=np.uint8)
-
     def start(self):
         self.sock.listen(5)
+        print(f'[INIT] Server listening on {self._port}')
         while True:
             client, address = self.sock.accept()
+            
+            print(f'[CONN] Connection accepted with {address}')
             
             self.clients.append(client)
             
             # TODO: Send starter image
+            bytes_data = self.get_image_bytes()
+            client.send(bytes_data)
 
             connection_handler = threading.Thread(target=self.connection_handler, args=(client, address,))
             connection_handler.start()
+            
+    def get_image_bytes(self):
+        flat_arr = self.pixels.flatten()
+        flat_arr = flat_arr.tolist()
+        
+        data = {'shape': self.pixels.shape, 'arr': flat_arr}
+        
+        json_data = json.dumps(data)
+        bytes_data = json_data.encode()
+        
+        return bytes_data
 
     def connection_handler(self, client, address):
         while True:
             # Wait for pixel command
-            # ...
             try:
                 raw_message = client.recv(1024).decode()
-                
+
                 if raw_message == '.q':
-                    print(raw_message)
-                    self.clients.remove(client)
-                    client.close()
+                    self.terminate(client, address)
                     break
                 
                 message = json.loads(raw_message)
             
                 # Process pixel
-                # ...
-                print(message)
+                print(f'[MSG] Recieved {message} from {address}')
                 self.pixels[message['y'], message['x']] = message['color']
                 
-                img = Image.fromarray(self.pixels)
-                img.save('test.png')
-                
                 # Send updated canvas
-                # self.broadcast()
+                self.broadcast()
             
             except ConnectionAbortedError:
+                self.terminate(client, address)
                 break
             
             except json.JSONDecodeError:
                 pass
-            # except:
-            #     print('Error')
-            #     client.close()
-            #     break
+            
+    def terminate(self, client, address):
+        self.clients.remove(client)
+        client.close()
+        print(f'[CONN] Connection closed with {address}')
+        
             
     def broadcast(self):
+        bytes_image = self.get_image_bytes()
         for client in self.clients:
-            client.send('BROADCAST'.encode())
+            client.send(bytes_image)
 
 
 if __name__ == '__main__':
