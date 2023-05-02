@@ -5,9 +5,10 @@ import time
 import json
 import numpy as np
 from PIL import Image
+from gui import GUI
 
 
-class Client:
+class Client(GUI):
 
     def __init__(self, host, port):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -23,33 +24,45 @@ class Client:
 
         receiver_thread = threading.Thread(target=self.receive)
         receiver_thread.start()
+        
+        super().__init__()
 
     def receive(self):
+        time.sleep(2)
         while not self.exiting:
             try:
                 message = self.sock.recv(10240)
-                print(len(message))
                 message = message.decode()
-                # print(message)
                 json_data = json.loads(message)
                 
-                print('MSG] Received image data')
+                print('[MSG] Received image data')
                 
                 self.update_image(json_data)
+                self.change_img()
                 
             except ConnectionAbortedError:
                 self.stop()
                 break
             
             except json.JSONDecodeError:
-                print('json error :()')
                 pass
 
     def write(self, data):
         message = json.dumps(data).encode()
         
         self.sock.send(message)
-
+        
+    def submit(self):
+        x, y, color = self.send_bits()
+        
+        # TODO PLS FIX
+        colors = color.split(',')
+        colors.append('255')
+        
+        data = {'x': int(x), 'y': int(y), 'color': colors}
+        
+        self.write(data)
+        
     def update_image(self, json_data):
         image_flat = np.array(json_data['arr'], dtype=np.uint8)
         image_data = image_flat.reshape(json_data['shape'])
@@ -68,19 +81,18 @@ if __name__ == '__main__':
   HOST = 'localhost'
   PORT = 8585
   client = Client(HOST, PORT)
-  time.sleep(2)
-  
 #   client.write({'x': 0, 'y': 0, 'color': (255, 255, 0, 255)})
   
-  while True:
-      m = input('> ')
-      m_split = m.split()
+#   while True:
+#       m = input('> ')
+#       m_split = m.split()
       
-      if len(m_split) == 0:
-          break
+#       if len(m_split) == 0:
+#           break
       
-      print(m_split)
+#       print(m_split)
       
-      client.write({'x': int(m_split[0]), 'y': int(m_split[1]), 'color': (255, 120, 0, 255)})
+#       client.write({'x': int(m_split[0]), 'y': int(m_split[1]), 'color': (255, 120, 0, 255)})
+  input()
   client.stop()
 
