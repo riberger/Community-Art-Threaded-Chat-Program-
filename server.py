@@ -10,10 +10,11 @@ class Server():
     def __init__(self, port):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+        self._host = 'localhost'
         self._port = port
 
-        self.sock.bind(('127.0.0.1', self._port))
-        self.sock.listen()
+        
+        self.sock.bind((self._host, self._port))
 
         self.clients = []
         
@@ -24,10 +25,13 @@ class Server():
         # self.pixels = np.zeros([16, 16, 3], dtype=np.uint8)
 
     def start(self):
+        self.sock.listen(5)
         while True:
             client, address = self.sock.accept()
             
             self.clients.append(client)
+            
+            # TODO: Send starter image
 
             connection_handler = threading.Thread(target=self.connection_handler, args=(client, address,))
             connection_handler.start()
@@ -40,6 +44,7 @@ class Server():
                 raw_message = client.recv(1024).decode()
                 
                 if raw_message == '.q':
+                    print(raw_message)
                     self.clients.remove(client)
                     client.close()
                     break
@@ -73,5 +78,5 @@ class Server():
 
 
 if __name__ == '__main__':
-    s = Server(8080)
+    s = Server(8585)
     s.start()

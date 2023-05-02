@@ -33,6 +33,7 @@ class Client:
         message = json.dumps(data).encode()
         
         self.sock.send(message)
+        # self.sock.send('.q'.encode())
 
     def stop(self):
         self.sock.send('.q'.encode())
@@ -42,11 +43,12 @@ class Client:
   
 if __name__ == '__main__':
   # HOST = '172.25.43.197'
-  HOST = '127.0.0.1'
-  PORT = 8080
+  HOST = 'localhost'
+  PORT = 8585
   client = Client(HOST, PORT)
   time.sleep(2)
   
-  client.write({'x': 0, 'y': 0, 'color': (255, 255, 0, 255)})
-  client.write({'x': 3, 'y': 0, 'color': (0, 0, 255, 255)})
+#   client.write({'x': 0, 'y': 0, 'color': (255, 255, 0, 255)})
+  client.write({'x': 5, 'y': 3, 'color': (50, 120, 0, 255)})
+  client.stop()
 
