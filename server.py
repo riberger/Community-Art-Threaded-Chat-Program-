@@ -10,7 +10,7 @@ class Server():
     def __init__(self, port):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        self._host = 'localhost'
+        self._host = '0.0.0.0'
         self._port = port
 
         
