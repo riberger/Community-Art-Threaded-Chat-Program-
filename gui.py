@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter.colorchooser import askcolor
 import tkinter as tk
 from PIL import Image, ImageTk
 
@@ -30,7 +31,6 @@ class GUI:
 
         self.x_entry = Entry(self.window,textvariable = self.x_var, font=('calibre',20,'normal'))
         self.y_entry = Entry(self.window,textvariable = self.y_var, font=('calibre',20,'normal'))
-        self.color_entry = Entry(self.window,textvariable = self.color_var, font=('calibre',20,'normal'))
 
 
         #label.image = display
@@ -40,29 +40,31 @@ class GUI:
         self.x_entry.place(relx =0.2, rely = .75)
         self.y_label.place(relx=0.02,rely=.81)
         self.y_entry.place(relx =0.2, rely = .81)
-        self.color_label.place(relx=0.02,rely=.87)
-        self.color_entry.place(relx = 0.2, rely= .87)
-        
         
         self.send_btn=Button(self.window,text = 'Send', command = self.submit)
         
-        self.send_btn.place(relx=0.02, rely=.93)
+        self.send_btn.place(relx=0.02, rely=.87)
         
         # self.change_img()
         
         self.window.mainloop()
     
     def send_bits(self):
-        color= self.color_var.get()
         x = self.x_var.get()
         y = self.y_var.get()
+        
+        x = int(x) - 1
+        y = int(y) - 1
+        
+        if x < 0 or x > 15 or y < 0 or y > 15:
+            x = -1
+            y = -1
         
         #Send Variables to server
         self.x_var.set("")
         self.y_var.set("")
-        self.color_var.set("")
         
-        return x, y, color
+        return x, y
     
     def submit(self):
         pass

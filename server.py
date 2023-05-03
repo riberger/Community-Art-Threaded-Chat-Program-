@@ -37,6 +37,8 @@ class Server():
 
             connection_handler = threading.Thread(target=self.connection_handler, args=(client, address,))
             connection_handler.start()
+        
+        
             
     def get_image_bytes(self):
         flat_arr = self.pixels.flatten()
