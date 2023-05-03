@@ -106,7 +106,7 @@ class Client(GUI):
   
 if __name__ == '__main__':
 #   HOST = socket.gethostbyname('172.25.41.213')
-  HOST = 'localhost'
+  HOST = '172.25.42.30'
   PORT = 8585
   client = Client(HOST, PORT)
 
